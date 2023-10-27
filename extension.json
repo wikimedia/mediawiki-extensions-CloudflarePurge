@@ -1,0 +1,36 @@
+{
+	"manifest_version": 2,
+	"name": "CloudflarePurge",
+	"version": "1.0",
+	"url": "https://www.mediawiki.org/wiki/Extension:CloudflarePurge",
+	"author": "[https://www.mediawiki.org/wiki/User:Sophivorus Sophivorus]",
+	"descriptionmsg": "cloudflarepurge-desc",
+	"license-name": "GPL-3.0-or-later",
+	"type": "user activity",
+	"requires": {
+		"MediaWiki": ">= 1.39.0"
+	},
+	"MessagesDirs": {
+		"CloudflarePurge": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"CloudflarePurge": "CloudflarePurge.php"
+	},
+	"Hooks": {
+		"PageSaveComplete": "CloudflarePurge::onPageSaveComplete",
+		"PageDeleteComplete": "CloudflarePurge::onPageSaveComplete"
+	},
+	"config": {
+		"CloudflarePurgeZoneID": {
+			"value": ""
+		},
+		"CloudflarePurgeAuthEmail": {
+			"value": ""
+		},
+		"CloudflarePurgeAuthKey": {
+			"value": ""
+		}
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sophivorus"
+		]
+	},
+	"cloudflarepurge-desc": "Purge the Cloudflare cache of edited pages"
+}
