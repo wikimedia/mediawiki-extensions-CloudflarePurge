@@ -47,9 +47,9 @@ class CloudflarePurge {
 		curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, 'DELETE' );
 		curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
 		$headers = [
-		    'X-Auth-Email: ' . $authEmail,
-		    'X-Auth-Key: ' . $authKey,
-		    'Content-Type: application/json'
+			'X-Auth-Email: ' . $authEmail,
+			'X-Auth-Key: ' . $authKey,
+			'Content-Type: application/json'
 		];
 		$data = json_encode( [ 'files' => [ $url ] ] );
 		curl_setopt( $curl, CURLOPT_POST, true );
