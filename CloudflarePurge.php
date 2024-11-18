@@ -32,31 +32,60 @@ class CloudflarePurge {
 	 * string $url URL of the page to purge
 	 */
 	public static function purge( string $url ) {
-		// Make sure all the necessary config is set
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$zoneID = $config->get( 'CloudflarePurgeZoneID' );
+		$purgeToken = $config->get( 'CloudflarePurgeToken' );
 		$authEmail = $config->get( 'CloudflarePurgeAuthEmail' );
 		$authKey = $config->get( 'CloudflarePurgeAuthKey' );
-		if ( !$zoneID || !$authEmail || !$authKey ) {
+
+		if ( !$zoneID ) {
 			return;
 		}
 
-		// Send the purge request to Cloudflare
+		if ( $purgeToken ) {
+			$headers = [
+				'Authorization: Bearer ' . $purgeToken,
+				'Content-Type: application/json'
+			];
+		} elseif ( $authEmail && $authKey ) {
+			$headers = [
+				'X-Auth-Email: ' . $authEmail,
+				'X-Auth-Key: ' . $authKey,
+				'Content-Type: application/json'
+			];
+		} else {
+			return;
+		}
+
 		$curl = curl_init();
 		curl_setopt( $curl, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/zones/' . $zoneID . '/purge_cache' );
-		curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, 'DELETE' );
 		curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
-		$headers = [
-			'X-Auth-Email: ' . $authEmail,
-			'X-Auth-Key: ' . $authKey,
-			'Content-Type: application/json'
-		];
+
 		$data = json_encode( [ 'files' => [ $url ] ] );
 		curl_setopt( $curl, CURLOPT_POST, true );
 		curl_setopt( $curl, CURLOPT_POSTFIELDS, $data );
 		curl_setopt( $curl, CURLOPT_HTTPHEADER, $headers );
+
 		$response = curl_exec( $curl );
-		$result = json_decode( $response, true );
 		curl_close( $curl );
+
+		$result = json_decode( $response, true );
+		if ( !is_array( $result ) || !isset( $result['success'] ) ) {
+			throw new RuntimeException( 'Invalid response from Cloudflare API' );
+		}
+
+		if ( !$result['success'] ) {
+			$errorMessage = 'Cloudflare API Error: ';
+			if ( !empty( $result['errors'] ) ) {
+				$messages = [];
+				foreach ( $result['errors'] as $error ) {
+					$messages[] = $error['message'];
+				}
+				$errorMessage .= implode( ', ', $messages );
+			} else {
+				$errorMessage .= 'Unknown error';
+			}
+			throw new RuntimeException( $errorMessage );
+		}
 	}
 }
