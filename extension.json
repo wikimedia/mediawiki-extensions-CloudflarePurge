@@ -8,7 +8,7 @@
 	"license-name": "GPL-3.0-or-later",
 	"type": "user activity",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.39.4"
 	},
 	"MessagesDirs": {
 		"CloudflarePurge": [

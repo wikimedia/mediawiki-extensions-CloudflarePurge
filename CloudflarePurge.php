@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 class CloudflarePurge {
 
@@ -21,7 +22,7 @@ class CloudflarePurge {
 	 * MediaWiki\Page\ProperPageIdentity $page
 	 */
 	public static function onPageDeleteComplete( MediaWiki\Page\ProperPageIdentity $page ) {
-		$title = $page->getTitle();
+		$title = Title::newFromPageIdentity( $page );
 		$url = $title->getFullURL();
 		self::purge( $url );
 	}
