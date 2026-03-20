@@ -68,7 +68,6 @@ class CloudflarePurge {
 		curl_setopt( $curl, CURLOPT_HTTPHEADER, $headers );
 
 		$response = curl_exec( $curl );
-		curl_close( $curl );
 
 		$result = json_decode( $response, true );
 		if ( !is_array( $result ) || !isset( $result['success'] ) ) {
